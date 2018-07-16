@@ -1,0 +1,633 @@
+number_of_decks = 6
+standard_deck = sorted(4*[2,3,4,5,6,7,8,9,10,10,10,10,11])
+shoe = sorted(number_of_decks*standard_deck)
+removed=[]
+results=[]
+from random import randint
+#%%
+dhand=[]
+phand=[]
+def s_who_wins(w,x,y,z):
+    if sum(y)==21 and len(y)==2:
+        z.append(-1)
+    elif sum(x)>21:
+        z.append(-1*w)
+    elif sum(y)>21:
+        z.append(1*w)
+    elif sum(x)>sum(y): 
+        z.append(1*w)
+    elif sum(x)<sum(y): 
+        z.append(-1*w)
+def who_wins(w,x,y,z):
+    if x[0]==10 and x[1]==11:
+       if not sum(y)==21 or not len(y)==2:
+           z.append(1.5)
+    elif sum(x)>21:
+        z.append(-1*w)
+    elif sum(y)>21:
+        z.append(1*w)
+    elif sum(x)>sum(y): 
+        z.append(1*w)
+    elif sum(x)<sum(y): 
+        z.append(-1*w)
+def deal_card(x):
+    card=shoe[randint(0,4*13*6-1-len(removed))]
+    shoe.remove(card)
+    removed.append(card)
+    x.append(card)
+def split_hand(y,z):  
+  global stake
+  stake=1
+  y.sort()
+  #Hard totals
+  if not y[1]==11 and not y[0]==y[1]:   
+  #hit/stand on 13 to 16         
+      if sum(y)>=13 and sum(y)<17:
+          for x in xrange(19):
+              if sum(y)<17 and sum(z)>=7:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1     
+       #hit/stand on 12       
+      elif sum(y)==12:
+            for x in xrange(15):
+                if sum(y)<17 and sum(z) not in [4,5,6]:
+                  deal_card(y)  
+                  if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1   
+         #hit on 10/11 vs 10/11         
+      elif sum(y) in [10,11] and sum(z) in [10,11]:
+            for x in xrange(15):
+                if sum(y)<17 and sum(z) in [10,11]:
+                   deal_card(y)  
+                   if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1   
+          #double on 10/11        
+      elif sum(y) in [10,11] and sum(z) not in [10,11]:  
+           global stake
+           stake = 2
+           deal_card(y)
+           if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1   
+           #hit/double on 9      
+      elif sum(y) == 9 and sum(z) in [3,4,5,6]:  
+           global stake
+           stake = 2
+           deal_card(y)
+           if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1 
+      elif sum(y) == 9 and sum(z) not in [3,4,5,6]:    
+          for x in xrange(19):
+            if not sum(z)==2: 
+              if sum(y)<13:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1   
+            elif sum(z)==2:
+               if sum(y)<17:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1  
+            #hit on 8    
+      elif sum(y)<=8:
+          for x in xrange(19):
+             if sum(z)>6: 
+              if sum(y)<17:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1  
+             elif sum(z) in [4,5,6]: 
+              if sum(y)<12:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1 
+             elif sum(z) in [2,3]: 
+              if sum(y)<13:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1   
+      print y            
+     #Soft totals           
+  elif y[1]==11 and not y[0]==y[1]:
+      if sum(y)==18 and sum(z) in [3,4,5,6]:
+           global stake
+           stake = 2
+           deal_card(y)
+           if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1  
+      elif sum(y)==18:
+           if sum(z)>8:
+             deal_card(y) 
+             for x in xrange(15):
+                if sum(y)<17:
+                  deal_card(y)  
+                  if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1      
+      elif sum(z) in [3,4,5,6] and sum(y)==17 or sum(z) in [4,5,6] and sum(y) in [15,16] or sum(z) in [5,6] and sum(y) in [13,14]:
+           global stake
+           stake = 2
+           deal_card(y)
+           if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1    
+      elif sum(z)>8:
+           for x in xrange(19):
+               if 11 in y:
+                 if sum(y)<19:
+                  deal_card(y)  
+                  if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1
+               elif 11 not in y:
+                 if sum(y)<17:
+                  deal_card(y)  
+                  if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1    
+      elif sum(z)<9:
+           for x in xrange(19):
+               if 11 in y:
+                 if sum(y)<18:
+                  deal_card(y)  
+                  if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1
+               elif 11 not in y:
+                 if sum(y)<17:
+                  deal_card(y)  
+                  if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1    
+      print y              
+  elif y[0]==y[1]:
+      if y[0] == 5 and z[0] not in [10,11]:  
+           global stake
+           stake = 2
+           deal_card(y)
+           if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                    y=sorted(y)
+                    y[len(y)-1]=1 
+           print y              
+      elif z[0]==11 or z[0]==10 and not y[0]==11 or z[0] in [8,9] and y[0]<8 or z[0]==7 and y[0] in [4,6] or z[0]<5 and y[0]==4:
+           for x in xrange(19):
+              if sum(y)<17:
+                deal_card(y)
+                if sum(y)>21 and sorted(y)[len(y)-1]==11:
+                  y=sorted(y)
+                  y[len(y)-1]=1   
+           print y       
+      else:
+        print sum(results)
+        sphand_a=[y[0]]
+        sphand_b=[y[1]]
+        deal_card(sphand_a)
+        deal_card(sphand_b)
+        print "hand 1: " + str(sphand_a)
+        print "hand 2: " + str(sphand_b)
+        print sum(results)    
+def hand():
+  dhand=[]
+  phand=[]
+  global stake
+  stake=1
+  deal_card(dhand)
+  deal_card(phand)
+  deal_card(phand)
+  phand.sort()
+  print "dealer:"
+  print dhand
+  print "player:"
+  print phand
+  #Hard totals
+  if not phand[1]==11 and not phand[0]==phand[1]: 
+      #stick at 17 - dealer takes cards
+      if sum(phand)>=17:
+          for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1 
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand
+      #hit/stand on 13 to 16         
+      elif sum(phand)>=13 and sum(phand)<17:
+          for x in xrange(19):
+              if sum(phand)<17 and sum(dhand)>=7:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1                
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand                
+          for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1                  
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand  
+       #hit/stand on 12       
+      elif sum(phand)==12:
+            for x in xrange(15):
+                if sum(phand)<17 and sum(dhand) not in [4,5,6]:
+                  deal_card(phand)  
+                  if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand                
+            for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand   
+         #hit on 10/11 vs 10/11         
+      elif sum(phand) in [10,11] and sum(dhand) in [10,11]:
+            for x in xrange(15):
+                if sum(phand)<17 and sum(dhand) in [10,11]:
+                   deal_card(phand)  
+                   if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1 
+                   print "dealer:"
+                   print dhand
+                   print "player:"
+                   print phand 
+            for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+          #double on 10/11        
+      elif sum(phand) in [10,11] and sum(dhand) not in [10,11]:  
+           global stake
+           stake = 2
+           deal_card(phand)
+           if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1 
+           print "dealer:"
+           print dhand
+           print "player:"
+           print phand
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+           #hit/double on 9      
+      elif sum(phand) == 9 and sum(dhand) in [3,4,5,6]:  
+           global stake
+           stake = 2
+           deal_card(phand)
+           if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1 
+           print "dealer:"
+           print dhand
+           print "player:"
+           print phand
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+      elif sum(phand) == 9 and sum(dhand) not in [3,4,5,6]:    
+          for x in xrange(19):
+            if not sum(dhand)==2: 
+              if sum(phand)<13:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1                
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand
+            elif sum(dhand)==2:
+               if sum(phand)<17:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1                
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand 
+          for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1                  
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand  
+            #hit on 8    
+      elif sum(phand)<=8:
+          for x in xrange(19):
+             if sum(dhand)>6: 
+              if sum(phand)<17:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1                
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand     
+             elif sum(dhand) in [4,5,6]: 
+              if sum(phand)<12:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1                
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand
+             elif sum(dhand) in [2,3]: 
+              if sum(phand)<13:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1                
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand   
+          for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1                  
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand  
+      who_wins(stake,phand,dhand,results)            
+     #Soft totals           
+  elif phand[1]==11 and not phand[0]==phand[1]:
+      if sum(phand)>=19:
+          for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1 
+                print "dealer:"
+                print dhand
+                print "player:"
+                print phand
+      elif sum(phand)==18 and sum(dhand) in [3,4,5,6]:
+           global stake
+           stake = 2
+           deal_card(phand)
+           if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1 
+           print "dealer:"
+           print dhand
+           print "player:"
+           print phand
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+      elif sum(phand)==18:
+           if sum(dhand)>8:
+             deal_card(phand) 
+             for x in xrange(15):
+                if sum(phand)<17:
+                  deal_card(phand)  
+                  if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand                
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand 
+      elif sum(dhand) in [3,4,5,6] and sum(phand)==17 or sum(dhand) in [4,5,6] and sum(phand) in [15,16] or sum(dhand) in [5,6] and sum(phand) in [13,14]:
+           global stake
+           stake = 2
+           deal_card(phand)
+           if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1 
+           print "dealer:"
+           print dhand
+           print "player:"
+           print phand
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+      elif sum(dhand)>8:
+           for x in xrange(19):
+               if 11 in phand:
+                 if sum(phand)<19:
+                  deal_card(phand)  
+                  if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand 
+               elif 11 not in phand:
+                 if sum(phand)<17:
+                  deal_card(phand)  
+                  if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand 
+      elif sum(dhand)<9:
+           for x in xrange(19):
+               if 11 in phand:
+                 if sum(phand)<18:
+                  deal_card(phand)  
+                  if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand 
+               elif 11 not in phand:
+                 if sum(phand)<17:
+                  deal_card(phand)  
+                  if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+                  print "dealer:"
+                  print dhand
+                  print "player:"
+                  print phand   
+      who_wins(stake,phand,dhand,results)           
+  elif phand[0]==phand[1]:
+      if phand[0]==10 or phand[0]==9 and dhand[0] in [7,10,11]:          
+          for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1                  
+          print "dealer:"
+          print dhand
+          print "player:"
+          print phand     
+          who_wins(stake,phand,dhand,results)
+      elif phand[0] == 5 and dhand[0] not in [10,11]:  
+           global stake
+           stake = 2
+           deal_card(phand)
+           if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                    phand=sorted(phand)
+                    phand[len(phand)-1]=1 
+           for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1                  
+           print "dealer:"
+           print dhand
+           print "player:"
+           print phand      
+           who_wins(stake,phand,dhand,results)   
+      elif dhand[0]==11 or dhand[0]==10 and not phand[0]==11 or dhand[0] in [8,9] and phand[0]<8 or dhand[0]==7 and phand[0] in [4,6] or dhand[0]<5 and phand[0]==4:
+           for x in xrange(19):
+              if sum(phand)<17:
+                deal_card(phand)
+                if sum(phand)>21 and sorted(phand)[len(phand)-1]==11:
+                  phand=sorted(phand)
+                  phand[len(phand)-1]=1               
+           for x in xrange(19):
+              if sum(dhand)<17:
+                deal_card(dhand) 
+                if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                  dhand=sorted(dhand)
+                  dhand[len(dhand)-1]=1                  
+           print "dealer:"
+           print dhand
+           print "player:"
+           print phand     
+           who_wins(stake,phand,dhand,results)
+      else:
+        print sum(results)
+        sphand1=[phand[0]]
+        sphand2=[phand[1]]
+        deal_card(sphand1)
+        deal_card(sphand2)
+        print "hand 1: " + str(sphand1)
+        print "hand 2: " + str(sphand2)
+        split_hand(sphand1,dhand)
+        split_hand(sphand2,dhand)
+        for x in xrange(19):
+                if sum(dhand)<17:
+                  deal_card(dhand) 
+                  if sum(dhand)>21 and sorted(dhand)[len(dhand)-1]==11:
+                    dhand=sorted(dhand)
+                    dhand[len(dhand)-1]=1   
+        print "dealer: " + str(dhand)              
+        who_wins(stake,sphand1,dhand,results)
+        who_wins(stake,sphand2,dhand,results)
+        print sum(results)
+  print len(shoe)
+#%%%
+for x in xrange(50): 
+    while len(shoe)>30:
+       hand()
+       print sum(results)
+    shoe = sorted(number_of_decks*standard_deck)
+    removed=[]       
+sum(results)/len(results)
