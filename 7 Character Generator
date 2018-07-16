@@ -1,0 +1,12 @@
+letters=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+done=[]
+for t in letters:
+  for u in letters:  
+    for v in letters:
+      for w in letters:
+        for x in letters:
+          for y in letters:
+            for z in letters:                
+             print str(t)+str(u)+str(v)+str(w)+str(x)+str(y)+str(z)
+             done.append([t,u,v,w,x,y,z])
+print len(done)
