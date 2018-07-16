@@ -1,12 +1,24 @@
 letters=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 done=[]
 for t in letters:
-  for u in letters:  
+  print t 
+  done.append([t])
+  for u in letters:
+    print t+u
+    done.append([t,u])
     for v in letters:
+      print t+u+v
+      done.append([t,u,v])
       for w in letters:
+        print t+u+v+w
+        done.append([t,u,v,w])
         for x in letters:
+          print t+u+v+w+x
+          done.append([t,u,v,w,x])
           for y in letters:
+            print t+u+v+w+x+y
+            done.append([t,u,v,w,x,y])
             for z in letters:                
-             print str(t)+str(u)+str(v)+str(w)+str(x)+str(y)+str(z)
+             print t+u+v+w+x+y+z
              done.append([t,u,v,w,x,y,z])
 print len(done)
